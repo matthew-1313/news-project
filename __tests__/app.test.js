@@ -27,7 +27,7 @@ describe("GET/api/topics", () => {
     return request(app)
       .get("/api/topics")
       .then(({ body }) => {
-        //console.log(body.topics);
+        expect(body.topics).toHaveLength(3);
         body.topics.forEach((topic) => {
           expect(topic.hasOwnProperty("slug")).toBe(true);
           expect(typeof topic.slug).toBe("string");
