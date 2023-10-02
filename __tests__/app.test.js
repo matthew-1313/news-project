@@ -3,7 +3,6 @@ const app = require("../db/app.js");
 const request = require("supertest");
 const seed = require("../db/seeds/seed.js");
 const data = require("../db/data/test-data/index.js");
-const format = require("pg-format");
 
 beforeEach(() => {
   return seed(data);
@@ -35,5 +34,11 @@ describe("GET/api/topics", () => {
           expect(typeof topic.description).toBe("string");
         });
       });
+  });
+});
+
+describe("GET/api", () => {
+  test("returns 200 status code", () => {
+    return request(app).get("/api").expect(200);
   });
 });
