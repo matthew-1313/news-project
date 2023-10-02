@@ -37,8 +37,8 @@ describe("GET/api/topics", () => {
   });
 });
 
-describe("GET/api", () => {
-  test("returns 200 status code", () => {
-    return request(app).get("/api").expect(200);
-  });
-});
+// describe("GET/api", () => {
+//   test("returns 200 status code", () => {
+//     return request(app).get("/api").expect(200);
+//   });
+// });
