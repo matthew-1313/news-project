@@ -6,3 +6,13 @@ exports.fetchTopics = () => {
     return result.rows;
   });
 };
+
+exports.fetchArticles = (article_id) => {
+  //console.log("MODEL");
+  let query = `
+  SELECT * FROM articles
+  WHERE article_id = $1;`;
+  return db.query(query, [article_id]).then(({ rows }) => {
+    return rows[0];
+  });
+};
