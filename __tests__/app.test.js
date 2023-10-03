@@ -3,6 +3,7 @@ const app = require("../db/app.js");
 const request = require("supertest");
 const seed = require("../db/seeds/seed.js");
 const data = require("../db/data/test-data/index.js");
+const endpointInfo = require("../endpoints.json");
 
 beforeEach(() => {
   return seed(data);
@@ -37,8 +38,14 @@ describe("GET/api/topics", () => {
   });
 });
 
-// describe("GET/api", () => {
-//   test("returns 200 status code", () => {
-//     return request(app).get("/api").expect(200);
-//   });
-// });
+describe("GET/api", () => {
+  test("returns 200 status code", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toEqual(endpointInfo);
+      })
+      .catch();
+  });
+});

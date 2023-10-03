@@ -1,4 +1,5 @@
 const { fetchTopics, fetchApiInfo } = require("../model/model.js");
+const endpointInfo = require("../../endpoints.json");
 
 exports.getTopics = (req, res, next) => {
   return fetchTopics()
@@ -9,11 +10,6 @@ exports.getTopics = (req, res, next) => {
 };
 
 exports.explainApi = (req, res, next) => {
-  console.log("CONTROLLER");
-  return fetchApiInfo()
-    .then((info) => {
-      console.log(info);
-      res.status(200).send({ info });
-    })
-    .catch(next);
+  // console.log("CONTROLLER");
+  res.status(200).send(endpointInfo);
 };
