@@ -13,14 +13,8 @@ afterAll(() => {
   db.end();
 });
 
-describe("GET/api errors", () => {
-  test("404 not found", () => {
-    return request(app).get("/api/something").expect(404);
-  });
-});
-
 describe("GET/api/topics", () => {
-  test("returns 200 status code", () => {
+  test("200 status code", () => {
     return request(app).get("/api/topics").expect(200);
   });
   test("responds with array of correct topic objects", () => {
@@ -39,13 +33,71 @@ describe("GET/api/topics", () => {
 });
 
 describe("GET/api", () => {
-  test("returns 200 status code", () => {
+  test("200 status code", () => {
+    return request(app).get("/api").expect(200);
+  });
+  test("returns object explaining api paths", () => {
     return request(app)
       .get("/api")
-      .expect(200)
       .then(({ body }) => {
         expect(body).toEqual(endpointInfo);
       })
       .catch();
+  });
+});
+
+describe("GET/api/articles/:article_id", () => {
+  test("200 status code", () => {
+    return request(app).get("/api/articles/2").expect(200);
+  });
+  test("returns correct article with all properties", () => {
+    return request(app)
+      .get("/api/articles/2")
+      .then(({ body }) => {
+        expect(body.article.hasOwnProperty("article_id")).toBe(true);
+        expect(body.article.article_id).toBe(2);
+        expect(body.article.hasOwnProperty("author")).toBe(true);
+        expect(body.article.hasOwnProperty("title")).toBe(true);
+        expect(body.article.hasOwnProperty("body")).toBe(true);
+        expect(body.article.hasOwnProperty("topic")).toBe(true);
+        expect(body.article.hasOwnProperty("created_at")).toBe(true);
+        expect(body.article.hasOwnProperty("votes")).toBe(true);
+      })
+      .catch();
+  });
+});
+
+describe("GET/api errors", () => {
+  test("404 not found on path", () => {
+    return request(app)
+      .get("/apple")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("invalid file path");
+      });
+  });
+  test("404 not found on extension", () => {
+    return request(app)
+      .get("/api/something")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("invalid file path");
+      });
+  });
+  test("400 bad request on datatype", () => {
+    return request(app)
+      .get("/api/articles/wordNotNumber")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("bad request");
+      });
+  });
+  test("404 not found on unused id number", () => {
+    return request(app)
+      .get("/api/articles/9999")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("article not found");
+      });
   });
 });
