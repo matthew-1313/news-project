@@ -14,7 +14,6 @@ exports.explainApi = (req, res, next) => {
 };
 
 exports.articlesById = (req, res, next) => {
-  //console.log("CONTROLLER");
   const { article_id } = req.params;
   return fetchArticles(article_id)
     .then((article) => {
