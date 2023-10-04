@@ -67,6 +67,45 @@ describe("GET/api/articles/:article_id", () => {
   });
 });
 
+describe("GET/api/articles", () => {
+  test("200 status code", () => {
+    return request(app).get("/api/articles").expect(200);
+  });
+  test("responds with array of correct article objects", () => {
+    return request(app)
+      .get("/api/articles")
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(13);
+        body.articles.forEach((article) => {
+          expect(article.hasOwnProperty("article_id")).toBe(true);
+          expect(article.hasOwnProperty("author")).toBe(true);
+          expect(article.hasOwnProperty("title")).toBe(true);
+          expect(article.hasOwnProperty("topic")).toBe(true);
+          expect(article.hasOwnProperty("created_at")).toBe(true);
+          expect(article.hasOwnProperty("votes")).toBe(true);
+          expect(article.hasOwnProperty("article_img_url")).toBe(true);
+          expect(article.hasOwnProperty("comment_count")).toBe(true);
+        });
+      });
+  });
+  test("objects DO NOT have a body propertry", () => {
+    return request(app)
+      .get("/api/articles")
+      .then(({ body }) => {
+        body.articles.forEach((article) => {
+          expect(article.hasOwnProperty("body")).toBe(false);
+        });
+      });
+  });
+  test("returns objects sorted by DATE in DESC order", () => {
+    return request(app)
+      .get("api/articles")
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+});
+
 describe("GET/api errors", () => {
   test("404 not found on path", () => {
     return request(app)

@@ -7,7 +7,7 @@ exports.fetchTopics = () => {
   });
 };
 
-exports.fetchArticles = (article_id) => {
+exports.fetchArticleById = (article_id) => {
   let query = `
   SELECT * FROM articles
   WHERE article_id = $1;`;
@@ -17,5 +17,23 @@ exports.fetchArticles = (article_id) => {
     } else {
       return rows[0];
     }
+  });
+};
+
+exports.fetchArticles = () => {
+  console.log("MODEL");
+  let articleQuery = `SELECT author, title, article_id, topic, created_at, votes, article_img_url FROM articles ORDER BY created_at DESC;`;
+  return db.query(articleQuery).then((articleResult) => {
+    //console.log(articleResult.rows);
+    articleResult.rows.forEach((article) => {
+      article.comment_count = 0;
+    });
+    //console.log(articleResult.rows);
+    let commentQuery = `SELECT article_id FROM comments;`;
+    return db.query(commentQuery).then((commentResult) => {
+      const commentArray = commentResult.rows;
+      console.log(commentArray);
+      // foreach id in commentArray: article with equal article_id +=1
+    });
   });
 };
