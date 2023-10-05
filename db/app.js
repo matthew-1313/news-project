@@ -14,7 +14,6 @@ const {
 //
 
 //paths
-app.use(express.json());
 
 app.get("/api/topics", getTopics);
 

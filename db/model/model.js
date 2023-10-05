@@ -1,4 +1,5 @@
 const db = require("../connection");
+const { createRef } = require("../utils/utils");
 
 exports.fetchTopics = () => {
   let query = `SELECT * FROM topics;`;
@@ -21,19 +22,13 @@ exports.fetchArticleById = (article_id) => {
 };
 
 exports.fetchArticles = () => {
-  console.log("MODEL");
-  let articleQuery = `SELECT author, title, article_id, topic, created_at, votes, article_img_url FROM articles ORDER BY created_at DESC;`;
+  let articleQuery = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url,
+  COUNT(comments.body) AS comment_count FROM articles
+  LEFT JOIN comments ON comments.article_id = articles.article_id
+  GROUP BY articles.article_id 
+  ORDER BY created_at DESC;`;
   return db.query(articleQuery).then((articleResult) => {
-    //console.log(articleResult.rows);
-    articleResult.rows.forEach((article) => {
-      article.comment_count = 0;
-    });
-    //console.log(articleResult.rows);
-    let commentQuery = `SELECT article_id FROM comments;`;
-    return db.query(commentQuery).then((commentResult) => {
-      const commentArray = commentResult.rows;
-      console.log(commentArray);
-      // foreach id in commentArray: article with equal article_id +=1
-    });
+    const articleArray = articleResult.rows;
+    return articleArray;
   });
 };

@@ -54,57 +54,60 @@ describe("GET/api/articles/:article_id", () => {
     return request(app)
       .get("/api/articles/2")
       .then(({ body }) => {
-        expect(body.article.hasOwnProperty("article_id")).toBe(true);
-        expect(body.article.article_id).toBe(2);
-        expect(body.article.hasOwnProperty("author")).toBe(true);
-        expect(body.article.hasOwnProperty("title")).toBe(true);
-        expect(body.article.hasOwnProperty("body")).toBe(true);
-        expect(body.article.hasOwnProperty("topic")).toBe(true);
-        expect(body.article.hasOwnProperty("created_at")).toBe(true);
-        expect(body.article.hasOwnProperty("votes")).toBe(true);
+        expect(body.article).toMatchObject({
+          article_id: 2,
+          author: expect.any(String),
+          title: expect.any(String),
+          topic: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          body: expect.any(String),
+        });
       })
       .catch();
   });
 });
 
-// describe("GET/api/articles", () => {
-//   test("200 status code", () => {
-//     return request(app).get("/api/articles").expect(200);
-//   });
-//   test("responds with array of correct article objects", () => {
-//     return request(app)
-//       .get("/api/articles")
-//       .then(({ body }) => {
-//         expect(body.articles).toHaveLength(13);
-//         body.articles.forEach((article) => {
-//           expect(article.hasOwnProperty("article_id")).toBe(true);
-//           expect(article.hasOwnProperty("author")).toBe(true);
-//           expect(article.hasOwnProperty("title")).toBe(true);
-//           expect(article.hasOwnProperty("topic")).toBe(true);
-//           expect(article.hasOwnProperty("created_at")).toBe(true);
-//           expect(article.hasOwnProperty("votes")).toBe(true);
-//           expect(article.hasOwnProperty("article_img_url")).toBe(true);
-//           expect(article.hasOwnProperty("comment_count")).toBe(true);
-//         });
-//       });
-//   });
-//   test("objects DO NOT have a body propertry", () => {
-//     return request(app)
-//       .get("/api/articles")
-//       .then(({ body }) => {
-//         body.articles.forEach((article) => {
-//           expect(article.hasOwnProperty("body")).toBe(false);
-//         });
-//       });
-//   });
-//   test("returns objects sorted by DATE in DESC order", () => {
-//     return request(app)
-//       .get("api/articles")
-//       .then(({ body }) => {
-//         expect(body.articles).toBeSortedBy("created_at", { descending: true });
-//       });
-//   });
-// });
+describe("GET/api/articles", () => {
+  test("200 status code", () => {
+    return request(app).get("/api/articles").expect(200);
+  });
+  test("responds with array of correct article objects", () => {
+    return request(app)
+      .get("/api/articles")
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(13);
+        body.articles.forEach((article) => {
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            author: expect.any(String),
+            title: expect.any(String),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(String),
+          });
+        });
+      });
+  });
+  test("objects DO NOT have a body propertry", () => {
+    return request(app)
+      .get("/api/articles")
+      .then(({ body }) => {
+        body.articles.forEach((article) => {
+          expect(article.hasOwnProperty("body")).toBe(false);
+        });
+      });
+  });
+  test("returns objects sorted by DATE in DESC order", () => {
+    return request(app)
+      .get("/api/articles")
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+});
 
 describe("GET/api errors", () => {
   test("404 not found on path", () => {
