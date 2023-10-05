@@ -4,6 +4,7 @@ const {
   getTopics,
   explainApi,
   articlesById,
+  getArticleComments,
   getArticles,
 } = require("./controller/controller.js");
 const {
@@ -20,6 +21,8 @@ app.get("/api/topics", getTopics);
 app.get("/api", explainApi);
 
 app.get("/api/articles/:article_id", articlesById);
+
+app.get("/api/articles/:article_id/comments", getArticleComments);
 
 app.get("/api/articles", getArticles);
 //bad path

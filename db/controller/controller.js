@@ -2,6 +2,7 @@ const {
   fetchTopics,
   fetchArticleById,
   fetchArticles,
+  fetchComments,
 } = require("../model/model.js");
 const endpointInfo = require("../../endpoints.json");
 
@@ -30,6 +31,15 @@ exports.getArticles = (req, res, next) => {
   return fetchArticles()
     .then((articles) => {
       res.status(200).send({ articles });
+    })
+    .catch(next);
+};
+
+exports.getArticleComments = (req, res, next) => {
+  const articleId = req.params;
+  return fetchComments(articleId)
+    .then((comments) => {
+      res.status(200).send({ comments });
     })
     .catch(next);
 };
