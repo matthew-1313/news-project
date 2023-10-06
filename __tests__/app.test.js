@@ -180,4 +180,20 @@ describe("GET/api errors", () => {
         expect(body.message).toBe("article not found");
       });
   });
+  test("400 bad request on datatype for comments", () => {
+    return request(app)
+      .get("/api/articles/wordNotNumber/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("bad request");
+      });
+  });
+  test("200 for article id that has no comments attached", () => {
+    return request(app)
+      .get("/api/articles/10/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.message).toBe("no comments on this article");
+      });
+  });
 });

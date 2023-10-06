@@ -53,6 +53,13 @@ exports.fetchComments = (articleId) => {
       }
     })
     .then(({ rows }) => {
-      return rows;
+      if (rows.length === 0) {
+        return Promise.reject({
+          status: 200,
+          message: "no comments on this article",
+        });
+      } else {
+        return rows;
+      }
     });
 };
