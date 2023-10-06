@@ -63,3 +63,32 @@ exports.fetchComments = (articleId) => {
       }
     });
 };
+
+exports.makeAComment = (articleId, comment) => {
+  const article = articleId;
+  const user = comment.username;
+  const postedComment = comment.body;
+  let articleQuery = `
+  SELECT * FROM articles
+  WHERE article_id = $1;`;
+  let userQuery = `
+  SELECT * FROM users
+  WHERE username = $1;`;
+  let insertQuery = `
+  INSERT INTO comments
+  (body, author, article_id)
+  VALUES ($1, $2, $3)
+  RETURNING *;`;
+  return db.query(articleQuery, [article]).then(({ rows }) => {
+    if (rows.length === 0) {
+      return Promise.reject({ status: 404, message: "article not found" });
+    } else {
+      return db
+        .query(insertQuery, [postedComment, user, article])
+        .then((result) => {
+          // console.log(result);
+          return result.rows[0];
+        });
+    }
+  });
+};

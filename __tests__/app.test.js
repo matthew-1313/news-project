@@ -197,3 +197,129 @@ describe("GET/api errors", () => {
       });
   });
 });
+
+describe("POST/api/articles/:article_id/comments", () => {
+  test("200 status code", () => {
+    const newComment = {
+      username: "rogersop",
+      body: "this is my comment",
+    };
+    return request(app)
+      .post("/api/articles/10/comments")
+      .send(newComment)
+      .expect(200);
+  });
+  test("returns posted comment as object", () => {
+    const newComment = {
+      username: "rogersop",
+      body: "this is my comment",
+    };
+    return request(app)
+      .post("/api/articles/10/comments")
+      .send(newComment)
+      .then(({ body }) => {
+        expect(body.newComment).toMatchObject({
+          article_id: 10,
+          comment_id: expect.any(Number),
+          votes: expect.any(Number),
+          created_at: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+        });
+      });
+  });
+});
+
+describe("POST/api errors", () => {
+  test("404 not found on path", () => {
+    const newComment = {
+      username: "rogersop",
+      body: "this is my comment",
+    };
+    return request(app)
+      .post("/apple")
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("invalid file path");
+      });
+  });
+  test("404 not found on extension", () => {
+    const newComment = {
+      username: "rogersop",
+      body: "this is my comment",
+    };
+    return request(app)
+      .post("/api/something")
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("invalid file path");
+      });
+  });
+  test("400 bad request on datatype", () => {
+    const newComment = {
+      username: "rogersop",
+      body: "this is my comment",
+    };
+    return request(app)
+      .post("/api/articles/wordNotNumber/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("bad request");
+      });
+  });
+  test("404 not found on unused id number", () => {
+    const newComment = {
+      username: "rogersop",
+      body: "this is my comment",
+    };
+    return request(app)
+      .post("/api/articles/9999/comments")
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("article not found");
+      });
+  });
+  test("400 not found on wrong user", () => {
+    const newComment = {
+      username: "harrystylesmum",
+      body: "this is my comment",
+    };
+    return request(app)
+      .post("/api/articles/10/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("user not found");
+      });
+  });
+  test("400 not found on missing key", () => {
+    const newComment = {
+      username: "harrystylesmum",
+    };
+    return request(app)
+      .post("/api/articles/10/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("missing object key");
+      });
+  });
+  // test.only("400 not found on invalid key", () => {
+  //   const newComment = {
+  //     username: "harrystylesmum",
+  //     body: "this is my comment",
+  //     cunt: 69,
+  //   };
+  //   return request(app)
+  //     .post("/api/articles/10/comments")
+  //     .send(newComment)
+  //     .expect(400)
+  //     .then(({ body }) => {
+  //       expect(body.message).toBe("missing object key");
+  //     });
+  // });
+});
