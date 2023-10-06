@@ -109,6 +109,36 @@ describe("GET/api/articles", () => {
   });
 });
 
+describe("GET/api/articles/:article_id/comments", () => {
+  test("200 status code", () => {
+    return request(app).get("/api/articles/1/comments").expect(200);
+  });
+  test("returns array of correct comments for given article_id", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .then(({ body }) => {
+        expect(body.comments).toHaveLength(11);
+        body.comments.forEach((comment) => {
+          expect(comment).toMatchObject({
+            article_id: 1,
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+          });
+        });
+      });
+  });
+  test("returns objects sorted by CREATED_AT in ASC order", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .then(({ body }) => {
+        expect(body.comments).toBeSortedBy("created_at", { ascending: true });
+      });
+  });
+});
+
 describe("GET/api errors", () => {
   test("404 not found on path", () => {
     return request(app)
@@ -140,6 +170,30 @@ describe("GET/api errors", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.message).toBe("article not found");
+      });
+  });
+  test("404 on wrong article id for comments", () => {
+    return request(app)
+      .get("/api/articles/9999/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("article not found");
+      });
+  });
+  test("400 bad request on datatype for comments", () => {
+    return request(app)
+      .get("/api/articles/wordNotNumber/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("bad request");
+      });
+  });
+  test("200 for article id that has no comments attached", () => {
+    return request(app)
+      .get("/api/articles/10/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.message).toBe("no comments on this article");
       });
   });
 });
