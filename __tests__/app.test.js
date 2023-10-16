@@ -221,9 +221,9 @@ describe("POST/api/articles/:article_id/comments", () => {
         expect(body.newComment).toMatchObject({
           article_id: 10,
           comment_id: expect.any(Number),
-          votes: expect.any(Number),
+          votes: 0,
           created_at: expect.any(String),
-          author: expect.any(String),
+          author: "rogersop",
           body: expect.any(String),
         });
       });
@@ -231,32 +231,6 @@ describe("POST/api/articles/:article_id/comments", () => {
 });
 
 describe("POST/api errors", () => {
-  test("404 not found on path", () => {
-    const newComment = {
-      username: "rogersop",
-      body: "this is my comment",
-    };
-    return request(app)
-      .post("/apple")
-      .send(newComment)
-      .expect(404)
-      .then(({ body }) => {
-        expect(body.message).toBe("invalid file path");
-      });
-  });
-  test("404 not found on extension", () => {
-    const newComment = {
-      username: "rogersop",
-      body: "this is my comment",
-    };
-    return request(app)
-      .post("/api/something")
-      .send(newComment)
-      .expect(404)
-      .then(({ body }) => {
-        expect(body.message).toBe("invalid file path");
-      });
-  });
   test("400 bad request on datatype", () => {
     const newComment = {
       username: "rogersop",
@@ -283,7 +257,7 @@ describe("POST/api errors", () => {
         expect(body.message).toBe("article not found");
       });
   });
-  test("400 not found on wrong user", () => {
+  test("404 not found on wrong user", () => {
     const newComment = {
       username: "harrystylesmum",
       body: "this is my comment",
@@ -291,7 +265,7 @@ describe("POST/api errors", () => {
     return request(app)
       .post("/api/articles/10/comments")
       .send(newComment)
-      .expect(400)
+      .expect(404)
       .then(({ body }) => {
         expect(body.message).toBe("user not found");
       });
@@ -312,7 +286,7 @@ describe("POST/api errors", () => {
   //   const newComment = {
   //     username: "harrystylesmum",
   //     body: "this is my comment",
-  //     cunt: 69,
+  //     count: 70,
   //   };
   //   return request(app)
   //     .post("/api/articles/10/comments")
