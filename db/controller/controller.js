@@ -3,6 +3,7 @@ const {
   fetchArticleById,
   fetchArticles,
   fetchComments,
+  makeAComment,
 } = require("../model/model.js");
 const endpointInfo = require("../../endpoints.json");
 
@@ -40,6 +41,16 @@ exports.getArticleComments = (req, res, next) => {
   return fetchComments(articleId)
     .then((comments) => {
       res.status(200).send({ comments });
+    })
+    .catch(next);
+};
+
+exports.postComment = (req, res, next) => {
+  const articleId = req.params.article_id;
+  const comment = req.body;
+  return makeAComment(articleId, comment)
+    .then((newComment) => {
+      res.status(200).send({ newComment });
     })
     .catch(next);
 };
