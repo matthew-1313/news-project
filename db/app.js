@@ -7,6 +7,7 @@ const {
   getArticleComments,
   getArticles,
   postComment,
+  patchArticleById,
 } = require("./controller/controller.js");
 const {
   sqlErrors,
@@ -28,6 +29,8 @@ app.get("/api/articles/:article_id/comments", getArticleComments);
 app.get("/api/articles", getArticles);
 
 app.post("/api/articles/:article_id/comments", postComment);
+
+app.patch("/api/articles/:article_id", patchArticleById);
 //bad path
 app.all("/*", (req, res, next) => {
   res.status(404).send({ message: "invalid file path" });

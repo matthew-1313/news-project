@@ -4,6 +4,7 @@ const {
   fetchArticles,
   fetchComments,
   makeAComment,
+  changeVotes,
 } = require("../model/model.js");
 const endpointInfo = require("../../endpoints.json");
 
@@ -53,4 +54,12 @@ exports.postComment = (req, res, next) => {
       res.status(200).send({ newComment });
     })
     .catch(next);
+};
+
+exports.patchArticleById = (req, res, next) => {
+  const articleId = req.params.article_id;
+  const inc_votes = req.body;
+  return changeVotes(articleId, inc_votes).then((article) => {
+    res.status(200).send({ article });
+  });
 };

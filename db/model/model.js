@@ -92,3 +92,18 @@ exports.makeAComment = (articleId, comment) => {
     }
   });
 };
+
+exports.changeVotes = (articleId, inc_votes) => {
+  const article = articleId;
+  const votes = inc_votes.inc_votes;
+  if (votes === 0) {
+    return `db query all from article`;
+  }
+  if (votes > 0) {
+    return `db query all from article`;
+  }
+  if (votes < 0) {
+    return `db query all from article`;
+  }
+  console.log(votes);
+};

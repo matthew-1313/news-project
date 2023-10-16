@@ -282,18 +282,19 @@ describe("POST/api errors", () => {
         expect(body.message).toBe("missing object key");
       });
   });
-  // test.only("400 not found on invalid key", () => {
-  //   const newComment = {
-  //     username: "harrystylesmum",
-  //     body: "this is my comment",
-  //     count: 70,
-  //   };
-  //   return request(app)
-  //     .post("/api/articles/10/comments")
-  //     .send(newComment)
-  //     .expect(400)
-  //     .then(({ body }) => {
-  //       expect(body.message).toBe("missing object key");
-  //     });
-  // });
 });
+
+// describe.only("PATCH/api/articles/:article_id", () => {
+//   test("200 status code with INCREASE votes", () => {
+//     const newReq = { inc_votes: 10 };
+//     return request(app).patch("/api/articles/10").send(newReq).expect(200);
+//   });
+//   test("200 status code with DECREASE votes", () => {
+//     const newReq = { inc_votes: -10 };
+//     return request(app).patch("/api/articles/10").send(newReq).expect(200);
+//   });
+//   test("200 status code with ZERO votes", () => {
+//     const newReq = { inc_votes: 10 };
+//     return request(app).patch("/api/articles/10").send(newReq).expect(200);
+//   });
+// });
