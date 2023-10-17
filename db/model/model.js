@@ -92,43 +92,49 @@ exports.makeAComment = (articleId, comment) => {
   });
 };
 
-exports.changeVotes = (articleId, inc_votes) => {
-  const article = articleId;
-  const newVotes = inc_votes.inc_votes;
-
-  if (newVotes === 0) {
-    let query = `
-    SELECT * FROM articles
-    WHERE article_id = $1;`;
-    return db.query(query, [article]).then(({ rows }) => {
-      if (rows.length === 0) {
-        return Promise.reject({ status: 404, message: "article not found" });
-      } else {
-        return rows[0];
-      }
-    });
-  } else {
-    let voteQuery = `
+exports.changeVotes = (articleId, newVotes) => {
+  let voteQuery = `
     SELECT votes FROM articles
     WHERE article_id = $1;`;
-    return db.query(voteQuery, [article]).then(({ rows }) => {
-      if (rows.length === 0) {
-        return Promise.reject({ status: 404, message: "article not found" });
-      } else {
-        const currentVotes = rows[0].votes;
-        const updatedVotes = currentVotes + newVotes;
-
-        let upDatequery = `
+  return db.query(voteQuery, [articleId]).then(({ rows }) => {
+    if (rows.length === 0) {
+      return Promise.reject({ status: 404, message: "article not found" });
+    } else {
+      const currentVotes = rows[0].votes;
+      const updatedVotes = currentVotes + newVotes;
+      let updateQuery = `
         UPDATE articles
         SET votes = $1
         WHERE article_id = $2
         RETURNING *;`;
-        return db
-          .query(upDatequery, [updatedVotes, article])
-          .then(({ rows }) => {
-            return rows[0];
-          });
-      }
-    });
-  }
+      return db
+        .query(updateQuery, [updatedVotes, articleId])
+        .then(({ rows }) => {
+          return rows[0];
+        });
+    }
+  });
+};
+
+exports.removeComment = (commentId) => {
+  const commentQuery = `
+    SELECT * FROM comments
+    WHERE comment_id = $1;`;
+  return db.query(commentQuery, [commentId]).then(({ rows }) => {
+    if (rows.length === 0) {
+      return Promise.reject({ status: 404, message: "comment not found" });
+    } else {
+      const deleteQuery = `
+        DELETE FROM comments
+        WHERE comment_id = $1;`;
+      return db.query(deleteQuery, [commentId]).then(() => {
+        const checkQuery = `
+          SELECT * FROM comments
+          WHERE comment_id = $1;`;
+        return db.query(checkQuery, [commentId]).then(({ rows }) => {
+          return rows;
+        });
+      });
+    }
+  });
 };

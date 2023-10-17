@@ -346,3 +346,28 @@ describe("PATCH errors", () => {
     return request(app).patch("/api/articles/1").send(newReq).expect(400);
   });
 });
+
+describe("DELETE/api/comments/:comment_id", () => {
+  test("204 no content", () => {
+    return request(app).delete("/api/comments/10").expect(204);
+  });
+});
+
+describe("DELETE errors", () => {
+  test("400 bad request on datatype", () => {
+    return request(app)
+      .delete("/api/comments/wordNotNumber")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("bad request");
+      });
+  });
+  test("404 not found on unused comment id", () => {
+    return request(app)
+      .delete("/api/comments/9999999")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("comment not found");
+      });
+  });
+});

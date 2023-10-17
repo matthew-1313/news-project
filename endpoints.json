@@ -57,7 +57,7 @@
     ]
   },
   "POST/api/articles/:article_id/comments": {
-    "description": "posts the required comment based on the provided article_id",
+    "description": "posts the desired comment based on the provided article_id",
     "queries": [],
     "exampleResponse": [
       {

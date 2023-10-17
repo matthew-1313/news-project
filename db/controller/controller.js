@@ -5,6 +5,7 @@ const {
   fetchComments,
   makeAComment,
   changeVotes,
+  removeComment,
 } = require("../model/model.js");
 const endpointInfo = require("../../endpoints.json");
 
@@ -58,10 +59,29 @@ exports.postComment = (req, res, next) => {
 
 exports.patchArticleById = (req, res, next) => {
   const articleId = req.params.article_id;
-  const inc_votes = req.body;
-  return changeVotes(articleId, inc_votes)
-    .then((article) => {
-      res.status(200).send({ article });
+  const newVotes = req.body.inc_votes;
+  if (newVotes === 0) {
+    return fetchArticleById(articleId)
+      .then((article) => {
+        res.status(200).send({ article });
+      })
+      .catch(next);
+  } else {
+    return changeVotes(articleId, newVotes)
+      .then((article) => {
+        res.status(200).send({ article });
+      })
+      .catch(next);
+  }
+};
+
+exports.deleteComment = (req, res, next) => {
+  const commentId = req.params.comment_id;
+  return removeComment(commentId)
+    .then((result) => {
+      if (result.length === 0) {
+        res.sendStatus(204);
+      }
     })
     .catch(next);
 };
