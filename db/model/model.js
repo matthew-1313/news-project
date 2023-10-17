@@ -86,7 +86,6 @@ exports.makeAComment = (articleId, comment) => {
       return db
         .query(insertQuery, [postedComment, user, article])
         .then((result) => {
-          // console.log(result);
           return result.rows[0];
         });
     }
@@ -95,15 +94,41 @@ exports.makeAComment = (articleId, comment) => {
 
 exports.changeVotes = (articleId, inc_votes) => {
   const article = articleId;
-  const votes = inc_votes.inc_votes;
-  if (votes === 0) {
-    return `db query all from article`;
+  const newVotes = inc_votes.inc_votes;
+
+  if (newVotes === 0) {
+    let query = `
+    SELECT * FROM articles
+    WHERE article_id = $1;`;
+    return db.query(query, [article]).then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ status: 404, message: "article not found" });
+      } else {
+        return rows[0];
+      }
+    });
+  } else {
+    let voteQuery = `
+    SELECT votes FROM articles
+    WHERE article_id = $1;`;
+    return db.query(voteQuery, [article]).then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ status: 404, message: "article not found" });
+      } else {
+        const currentVotes = rows[0].votes;
+        const updatedVotes = currentVotes + newVotes;
+
+        let upDatequery = `
+        UPDATE articles
+        SET votes = $1
+        WHERE article_id = $2
+        RETURNING *;`;
+        return db
+          .query(upDatequery, [updatedVotes, article])
+          .then(({ rows }) => {
+            return rows[0];
+          });
+      }
+    });
   }
-  if (votes > 0) {
-    return `db query all from article`;
-  }
-  if (votes < 0) {
-    return `db query all from article`;
-  }
-  console.log(votes);
 };

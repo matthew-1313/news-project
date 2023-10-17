@@ -139,7 +139,7 @@ describe("GET/api/articles/:article_id/comments", () => {
   });
 });
 
-describe("GET/api errors", () => {
+describe("GET errors", () => {
   test("404 not found on path", () => {
     return request(app)
       .get("/apple")
@@ -230,7 +230,7 @@ describe("POST/api/articles/:article_id/comments", () => {
   });
 });
 
-describe("POST/api errors", () => {
+describe("POST errors", () => {
   test("400 bad request on datatype", () => {
     const newComment = {
       username: "rogersop",
@@ -284,17 +284,65 @@ describe("POST/api errors", () => {
   });
 });
 
-// describe.only("PATCH/api/articles/:article_id", () => {
-//   test("200 status code with INCREASE votes", () => {
-//     const newReq = { inc_votes: 10 };
-//     return request(app).patch("/api/articles/10").send(newReq).expect(200);
-//   });
-//   test("200 status code with DECREASE votes", () => {
-//     const newReq = { inc_votes: -10 };
-//     return request(app).patch("/api/articles/10").send(newReq).expect(200);
-//   });
-//   test("200 status code with ZERO votes", () => {
-//     const newReq = { inc_votes: 10 };
-//     return request(app).patch("/api/articles/10").send(newReq).expect(200);
-//   });
-// });
+describe("PATCH/api/articles/:article_id", () => {
+  test("200 status code with INCREASE votes", () => {
+    const newReq = { inc_votes: 10 };
+    return request(app).patch("/api/articles/10").send(newReq).expect(200);
+  });
+  test("returns correct article with INCREASED votes", () => {
+    const newReq = { inc_votes: 10 };
+    return request(app)
+      .patch("/api/articles/10")
+      .send(newReq)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article.votes).toBe(10);
+      });
+  });
+  test("200 status code with DECREASE votes", () => {
+    const newReq = { inc_votes: -11 };
+    return request(app).patch("/api/articles/1").send(newReq).expect(200);
+  });
+  test("returns correct article with DECRESED votes", () => {
+    const newReq = { inc_votes: -11 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(newReq)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article.votes).toBe(89);
+      });
+  });
+  test("200 status code with ZERO votes", () => {
+    const newReq = { inc_votes: 0 };
+    return request(app).patch("/api/articles/1").send(newReq).expect(200);
+  });
+  test("returns correct article with UNCHANGED votes", () => {
+    const newReq = { inc_votes: 0 };
+    return request(app)
+      .patch("/api/articles/10")
+      .send(newReq)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article.votes).toBe(0);
+      });
+  });
+});
+
+describe("PATCH errors", () => {
+  test("400 bad request on datatype", () => {
+    const newReq = { inc_votes: -11 };
+    return request(app)
+      .patch("/api/articles/wordNotNumber")
+      .send(newReq)
+      .expect(400);
+  });
+  test("404 not found on unused id", () => {
+    const newReq = { inc_votes: -11 };
+    return request(app).patch("/api/articles/99999").send(newReq).expect(404);
+  });
+  test("400 bad request on incorrect object", () => {
+    const newReq = { amIHappy: false };
+    return request(app).patch("/api/articles/1").send(newReq).expect(400);
+  });
+});
