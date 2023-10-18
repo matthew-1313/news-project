@@ -85,5 +85,10 @@
         "article_id": 1
       }
     ]
+  },
+  "DELETE/api/comments/:comment_id": {
+    "description": "deletes a comment based on the provided comment id",
+    "queries": [],
+    "exampleResponse": []
   }
 }

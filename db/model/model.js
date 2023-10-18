@@ -127,14 +127,7 @@ exports.removeComment = (commentId) => {
       const deleteQuery = `
         DELETE FROM comments
         WHERE comment_id = $1;`;
-      return db.query(deleteQuery, [commentId]).then(() => {
-        const checkQuery = `
-          SELECT * FROM comments
-          WHERE comment_id = $1;`;
-        return db.query(checkQuery, [commentId]).then(({ rows }) => {
-          return rows;
-        });
-      });
+      return db.query(deleteQuery, [commentId]);
     }
   });
 };

@@ -78,10 +78,8 @@ exports.patchArticleById = (req, res, next) => {
 exports.deleteComment = (req, res, next) => {
   const commentId = req.params.comment_id;
   return removeComment(commentId)
-    .then((result) => {
-      if (result.length === 0) {
-        res.sendStatus(204);
-      }
+    .then(() => {
+      res.sendStatus(204);
     })
     .catch(next);
 };
