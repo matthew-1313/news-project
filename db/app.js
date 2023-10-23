@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
 const {
   getTopics,
   explainApi,
@@ -17,6 +18,7 @@ const {
 } = require("./controller/error-control.js");
 //
 
+app.use(cors());
 app.use(express.json());
 //paths
 app.get("/api/topics", getTopics);
